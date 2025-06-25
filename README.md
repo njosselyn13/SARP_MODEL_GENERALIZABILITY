@@ -45,32 +45,36 @@ Then, run the following commands in order:
 
 ## Model codes and analysis
 
-In this work we use Logistic Regression (pre-trained and from scratch), Random Forest, XGBoost, TabNet, and TabNet+pretraining models. As explained in the paper, we run MHRN (logistic regression) model generalizability experiments using pre-trained MHRN group coefficients compared to training from scratch on our dataset. We then run a set of comparitive experiments of ML and DL models for all source-target transfer tasks of primary care (PC) and non-primary care (Non-PC) healthcare settings. These are all in-domain (pc2pc, nonpc2nonpc), out-of-domain (pc2nonpc, nonpc2pc), and combined (pc+nonpc2pc, pc+nonpc2nonpc). We then do feature importance analysis (SHAP) and a fairness study. All codes and descriptions are listed below, Optuna hyperparameter tuning is done for all relevant experiments. 
+In this work we use Logistic Regression (pre-trained and from scratch), Random Forest, XGBoost, TabNet, and TabNet+pretraining models. As explained in the paper, we run MHRN (logistic regression) model generalizability experiments using pre-trained MHRN group coefficients compared to training from scratch on our dataset. We then run a set of comparitive experiments of ML and DL models for all source-target transfer tasks of primary care (PC) and mental health specialty (MH) healthcare settings. These are all in-domain (pc2pc, mh2mh) or out-of-domain (pc2mh, mhc2pc). We then do feature importance analysis (SHAP) and a fairness study. All codes and descriptions are listed below, Optuna hyperparameter tuning is done for all relevant experiments. 
 
 MHRN Generalizability experiments:
 
-- tune_log_reg_102feats.py: train logistic regression from scratch on 102 features it (tuning with and without balancing separately)
-- tune_log_reg.py: train logistic regression from scratch on 320 features it (tuning with and without balancing separately)
+- ML_log_reg_pretrain.py: evaluate MHRN pretrained 102 PC coefficients directly on our PC data (no training)
+- ML_log_pretrain_MH.py: evaluate MHRN pretrained 94 MH coefficients directly on our MH data (no training)
+- ML_tune_log_reg_102feats.py: train logistic regression from scratch on 102 PC features for pc2pc (tuning with and without balancing separately)
+- ML_tune_log_reg_94feats_MH.py: train logistic regression from scratch on 94 MH features for mh2mh (tuning with and without balancing separately)
+- ML_tune_log_reg.py: train logistic regression from scratch on 320 features for pc2pc (tuning with and without balancing separately)
+- ML_tune_log_reg_MH.py: train logistic regression from scratch on 320 features for mh2mh (tuning with and without balancing separately)
 
 Machine vs Deep Learning experiments:
 
-- XGboost_entire_data.py: Train XGBoost PC+NonPC, Test PC or NonPC
-- XGboost_train1_test1.py: Train XGBoost PC or NonPC, Test PC or NonPC
-- RandomForest_1to1.py​: Train Random Forest PC or NonPC, Test PC or NonPC​
-- MHRN_TabNet_Train_entire_data_Nick.py​:
-  - Random Forest training: Train Random Forest PC+NonPC, Test PC or NonPC
-  - TabNet training: Train TabNet-0 PC+NonPC, Test PC or NonPC
-- Sandbox_mhrn_tabnet_updated.py​: Train TabNet-0 NonPC, Test PC or NonPC
-- MHRN_TabNet_updated_Nick.py: Train TabNet-0 PC, Test PC or NonPC
-- TabNet_pretraining_pc2pc.py: Train TabNet-1 PC, Test PC (pre-train ratio=0.5)
-- TabNet_pretraining_pc2nonpc.py: Train TabNet-1 PC, Test NonPC (pre-train ratio=0.5)
-- TabNet_pretraining_nonpc2pc.py: Train TabNet-1 NonPC, Test PC (pre-train ratio=0.5)
-- TabNet_pretraining_nonpc2nonpc.py: Train TabNet-1 NonPC, Test NonPC (pre-train ratio=0.5)
-- TabNet_pretraining_entire_data.py: Train TabNet-2, pre-train pc+nonpc, train classifier pc+nonpc, test pc OR nonpc (pre-train ratio=0.5)
-- TabNet_pretraining_all_pc2pc.py: Train TabNet-2, pre-train pc+nonpc, train classifier pc, test pc (pre-train ratio=0.5)
-- TabNet_pretraining_all_pc2nonpc.py: Train TabNet-2, pre-train pc+nonpc, train classifier pc, test nonpc (pre-train ratio=0.5)
-- TabNet_pretraining_all_nonpc2pc.py: Train TabNet-2, pre-train pc+nonpc, train classifier nonpc, test pc (pre-train ratio=0.5)
-- TabNet_pretraining_all_nonpc2nonpc.py: Train TabNet-2, pre-train pc+nonpc, train classifier nonpc, test nonpc (pre-train ratio=0.5)
+- ML_XGboost_entire_data.py: Train XGBoost PC+MH, Test PC or MH
+- ML_XGboost_train1_test1.py: Train XGBoost PC or MH, Test PC or MH
+- ML_RandomForest_1to1.py​: Train Random Forest PC or MH, Test PC or MH​
+- ML_DL_T0_RF_train_entire_data.py​:
+  - Random Forest training: Train Random Forest PC+MH, Test PC or MH
+  - TabNet training: Train TabNet-0 PC+MH, Test PC or MH
+- DL_TabNet0_train_pc.py​: Train TabNet-0 PC, Test PC or MH
+- DL_TabNet0_train_nonpc.py: Train TabNet-0 MH, Test PC or MH
+- DL_TabNet_pretraining_pc2pc.py: Train TabNet-1 PC, Test PC (pre-train ratio=0.5)
+- DL_TabNet_pretraining_pc2nonpc.py: Train TabNet-1 PC, Test MH (pre-train ratio=0.5)
+- DL_TabNet_pretraining_nonpc2pc.py: Train TabNet-1 MH, Test PC (pre-train ratio=0.5)
+- DL_TabNet_pretraining_nonpc2nonpc.py: Train TabNet-1 MH, Test MH (pre-train ratio=0.5)
+- DL_TabNet_pretraining_entire_data.py: Train TabNet-2, pre-train pc+mh, train classifier pc+mh, test pc OR mh (pre-train ratio=0.5)
+- DL_TabNet_pretraining_all_pc2pc.py: Train TabNet-2, pre-train pc+mh, train classifier pc, test pc (pre-train ratio=0.5)
+- DL_TabNet_pretraining_all_pc2nonpc.py: Train TabNet-2, pre-train pc+mh, train classifier pc, test mh (pre-train ratio=0.5)
+- DL_TabNet_pretraining_all_nonpc2pc.py: Train TabNet-2, pre-train pc+mh, train classifier mh, test pc (pre-train ratio=0.5)
+- DL_TabNet_pretraining_all_nonpc2nonpc.py: Train TabNet-2, pre-train pc+mh, train classifier mh, test mh (pre-train ratio=0.5)
 
 SHAP Feature Importance analysis:
 
@@ -78,16 +82,18 @@ SHAP Feature Importance analysis:
 
 Fairness analysis:
 
-- fairness_gender.py: model analysis for subsets of male and female
+- fairness_gender.py: model analysis for subsets of male and female sexes
 - fairness_race_grouped.py: model analysis for race subsets of white, black other
+- fairness_ethnicity.py: model analysis for ethnicity subsets of Hispanic and not Hispanic
+- fairness_quantify: fairness metrics for race
+- fairness_quantify_ethnicity.py: fairness metrics for ethnicity
+- fairness_quantify_gender.py: fairness metrics for sex
+- fairness_plotting.py: create the fairness plot
 
 Other scripts:
 
-- bootstrap_nick.py: perform bootstrapping with 95% confidence interval results on test set for all experiments
-- fairness_plotting.py: create the fairness plot
-
+- bootstrap_over13.py: perform bootstrapping with 95% confidence interval results on test set for all experiments
 - geenerate_sh_jobs_bootstrap_exps.py: helper function to generate bash scripts to run
-- pre_process_320_to_102.py: matching the overlapping and non-overlapping feature names of the 102 coefficients released by MHRN and the overall 320. Also correcting mismatched names between MHRN and our data columns. 
 
 
 ## Saved Models
