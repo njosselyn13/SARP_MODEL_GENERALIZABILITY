@@ -2,6 +2,10 @@
 
 # Assessing Model Generalizability Across Clinical Settings in Suicide Attempt Risk Prediction
 
+Corresponding Authors: Edwin D. Boudreaux, Feifan Liu
+
+Contact: Edwin.Boudreaux [at] umassmed [dot] edu, feifan.liu [at] umassmed [dot] edu
+
 Nicholas Josselyn
 
 Contact: njjosselyn [at] wpi [dot] edu
