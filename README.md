@@ -44,7 +44,7 @@ Then, run the following commands in order:
 
 ## Model codes and analysis
 
-In this work we use Logistic Regression (pre-trained and from scratch), Random Forest, XGBoost, TabNet, and TabNet+pretraining models. As explained in the paper, we run MHRN (logistic regression) model generalizability experiments using pre-trained MHRN group coefficients compared to training from scratch on our dataset. We then run a set of comparitive experiments of ML and DL models for all source-target transfer tasks of primary care (PC) and mental health specialty (MH) healthcare settings. These are all in-domain (pc2pc, mh2mh) or out-of-domain (pc2mh, mhc2pc). We then do feature importance analysis (SHAP) and a fairness study. All codes and descriptions are listed below, Optuna hyperparameter tuning is done for all relevant experiments. 
+In this work we use Logistic Regression (pre-trained and from scratch), Random Forest, XGBoost, TabNet, and TabNet+pretraining models. As explained in the paper, we run MHRN (logistic regression) model generalizability experiments using pre-trained MHRN group coefficients compared to training from scratch on our dataset. We then run a set of comparitive experiments of ML and DL models for all source-target transfer tasks of primary care (PC) and mental health specialty (MH) healthcare settings. These are all in-domain (pc2pc, mh2mh) or out-of-domain (pc2mh, mhc2pc). We then do feature importance analysis (SHAP) and a fairness study. All codes and descriptions are listed below, Optuna hyperparameter tuning is done for all relevant experiments. NOTE: When referring to Non-PC, we mean MH. 
 
 MHRN Generalizability experiments:
 
