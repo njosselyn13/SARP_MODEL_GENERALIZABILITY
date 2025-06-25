@@ -23,7 +23,6 @@ This code was used to produce the results in the above paper title. Included her
 - Bootstrap sampling and 95% confidence intervals code (test set)
 - SHAP feature analysis
 - Fairness analysis
-- Sample bash scripts for running (.sh files)
 - Environment setup
 - Supplementary tables and figures (PDF)
 - Citation information
