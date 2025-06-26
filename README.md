@@ -14,7 +14,9 @@ Link to paper: TBA
 
 Nicholas Josselyn, Sahil Sawant, Rachel Davis-Martin, Elke Rundensteiner, Ben S. Gerber, Bo Wang, Anthony Rothschild, Emmanuel Agu, Edwin D. Boudreaux, Feifan Liu. "Assessing Model Generalizability Across Clinical Settings in Suicide Attempt Risk Prediction". In submission.
 
-In this work we investigate the generalizability of pre-trained models by the NIMH-funded MHRN group on our UMass Medical dataset of over 750,000 patient encounters for the task of suicide attempt risk prediction (SARP). Additionally, we train and evaluate machine (ML) and deep learning (DL) models on our UMass dataset and study the generalizability of these models across different patient healthcare visits, in particular primary care (PC) and mental health specialty (MH) healthcare visits. Additionally, we provide feature importance analysis using SHAP to identify top contributing features to making predictions and a fairness anlaysis study on demographic subgroups of race (white, black, other), sex (male, female), and ethnicity (Hispanic, not Hispanic).
+In this work we investigate the generalizability of pre-trained logistic regression models by the NIMH-funded MHRN group on our UMass Medical dataset of over 750,000 patient encounters for the task of suicide attempt risk prediction (SARP). Additionally, we train and evaluate machine (ML) and deep learning (DL) models on our UMass dataset and study the generalizability of these models across different patient healthcare visits, in particular primary care (PC) and mental health specialty (MH) healthcare visits. Additionally, we provide feature importance analysis using SHAP to identify top contributing features to making predictions and a fairness anlaysis study on demographic subgroups of race (white, black, other), sex (male, female), and ethnicity (Hispanic, not Hispanic). 
+
+We provide this code repository for reproducibility of results. 
 
 ## Introduction
 This code was used to produce the results in the above paper title. Included here will be:
