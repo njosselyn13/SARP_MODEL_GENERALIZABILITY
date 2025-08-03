@@ -34,6 +34,7 @@ np.random.seed(SEED)
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+ 
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -42,10 +43,11 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
+# drop cols not overlap mhrn 
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
-pth_pc_coeff_df = 'Mental health specialty coefficients.xlsx'
+pth_pc_coeff_df = 'Mental health specialty coefficients.xlsx' # from https://github.com/MHResearchNetwork/srpm-model
 
 
 
@@ -62,6 +64,7 @@ data["event90"] = data["event90"].fillna(value=0)
 
 data = data.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix dropped cols above 
 data.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
@@ -221,7 +224,7 @@ for i in missing_columns:
 
 
 
-# drop all columns EXCEPT the 102 MHRN feature columns
+# drop all columns EXCEPT the 94 MHRN feature columns
 
 # fix differing col names
 
@@ -239,8 +242,8 @@ pc_data_renamed.rename(columns={'highdedectible': 'highdeductible', 'lvi_sui_att
                                 'raceBlack_de': 'raceblack_de', 'raceBlack_an': 'raceblack_an',
                                 'raceUN_bi': 'raceun_bi', 'raceAsian_8': 'raceasian_8', 'raceIN_8': 'racein_8'}, inplace=True)
 
-# get 102 MHRN columns names
-mhrn_pc_coeff_df = pd.read_excel(pth_pc_coeff_df)
+# get 94 MHRN columns names
+mhrn_pc_coeff_df = pd.read_excel(pth_pc_coeff_df) # MH, not pc
 mhrn_col_names = mhrn_pc_coeff_df['event90'].tolist()
 mhrn_col_names.remove('-------------------------------')
 mhrn_col_names.remove('_cons')
@@ -432,4 +435,5 @@ print()
 joblib.dump(clf, 'logs_MH_subset/saved_models/log_reg_94scratch_balanced_MH_correct.pkl')
 print("model saved")
 print()
+
 
