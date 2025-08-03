@@ -53,6 +53,7 @@ start_time = time.time()
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+ 
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -61,7 +62,7 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
-
+# drop cols not in mhrn 
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
@@ -88,6 +89,7 @@ data["event90"] = data["event90"].fillna(value=0)
 
 data = data.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix dropped cols above 
 data.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
@@ -129,24 +131,6 @@ y_non_pc = non_pc_data["event90"]
 # print(non_pc_data)
 
 
-# ## Scaling data
-
-# # In[16]:
-# pc_columns_to_scale = ["age","days_since_prev","charlson_score","charlson_a","dep_dx_pre5y_cumulative_a","anx_dx_pre5y_cumulative_a","bip_dx_pre5y_cumulative_a","sch_dx_pre5y_cumulative_a","phqnumber90","phqnumber183","phqnumber365","phq8_index_score_calc_f","raceAsian_8","raceIN_8","hispanic_8","age_8","q9_0_a","q9_1_8","q9_2_8","q9_3_8","q9_1_c","q9_2_c","q9_3_c","any_sui_att_pre5y_cumulative_a","any_sui_att_pre5y_cumulative_8","any_sui_att_pre5y_cumulative_c"]
-#
-#
-# # In[17]:
-# count = 0
-# for i in pc_columns_to_scale:
-#     if i in pc_data.columns:
-#         count += 1
-#     else:
-#         print(i)
-# print(count)
-#
-#
-# # In[18]:
-# pc_data[pc_columns_to_scale] = scale(pc_data[pc_columns_to_scale])
 
 
 # In[19]:
@@ -162,23 +146,7 @@ pc_data = pc_data.drop(columns=["PRIMARY_CARE_VISIT","person_id","event30","even
 # print(pc_data.columns)
 
 
-# # In[22]:
-# non_pc_columns_to_scale = ["age","days_since_prev","charlson_score","charlson_a","dep_dx_pre5y_cumulative_a","anx_dx_pre5y_cumulative_a","bip_dx_pre5y_cumulative_a","sch_dx_pre5y_cumulative_a","phqnumber90","phqnumber183","phqnumber365","phq8_index_score_calc_f","raceAsian_8","raceIN_8","hispanic_8","age_8","q9_0_a","q9_1_8","q9_2_8","q9_3_8","q9_1_c","q9_2_c","q9_3_c","any_sui_att_pre5y_cumulative_a","any_sui_att_pre5y_cumulative_8","any_sui_att_pre5y_cumulative_c"]
-#
-#
-# # In[23]:
-# count = 0
-# for i in non_pc_columns_to_scale:
-#     if i in non_pc_data.columns:
-#         count += 1
-#     else:
-#         print(i)
-# print(count)
-#
-#
-# # In[24]:
-# non_pc_data[non_pc_columns_to_scale] = scale(non_pc_data[non_pc_columns_to_scale])
-# # print(non_pc_data)
+
 
 
 # In[25]:
@@ -387,17 +355,6 @@ X_train_non_pc, X_val_non_pc, y_train_non_pc, y_val_non_pc = train_test_split(tr
 # In[41]:
 # print(y_train_non_pc)
 
-
-# # In[42]:
-# X_train_non_pc_optuna1, _, y_train_non_pc_optuna1, _ = train_test_split(train_X_non_pc, train_y_non_pc, test_size=0.97, random_state=42, stratify = train_y_non_pc)
-#
-#
-# # In[43]:
-# X_train_non_pc_optuna2, _, y_train_non_pc_optuna2, _ = train_test_split(train_X_non_pc, train_y_non_pc, test_size=0.97, random_state=54, stratify = train_y_non_pc)
-#
-#
-# # In[44]:
-# X_train_non_pc_optuna3, _, y_train_non_pc_optuna3, _ = train_test_split(train_X_non_pc, train_y_non_pc, test_size=0.97, random_state=1, stratify = train_y_non_pc)
 
 print('XGBoost Hyperparameter Tuning using Optuna')
 # XGBoost
@@ -1048,14 +1005,5 @@ print()
 
 
 end_time = time.time()
-print(f"Time taken to generate SHAP values and plot: {end_time - start_time} seconds")
+print(f"Time taken: {end_time - start_time} seconds")
 
-# clf = GradientBoostingClassifier().fit(X_train, y_train)
-#
-# res = clf.score(X_test, y_test)
-# print(res)
-#
-# print()
-#
-# roc_auc = roc_auc_score(y_test, clf.predict_proba(X_test)[:, 1])
-# print(roc_auc)
