@@ -45,10 +45,11 @@ random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
 
-# data = pd.read_csv('MHRN-OP-new.csv')
+
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -57,6 +58,7 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
+# drop cols not overlap mhrn 
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
@@ -93,22 +95,6 @@ data[columns_to_scale] = scale(data[columns_to_scale])
 # ### Dealing with missing values
 
 missing_columns = data.columns[data.isnull().any()]
-
-
-# plt.figure(figsize=(10,6))
-# sns.heatmap(data[missing_columns].isna().transpose(),
-#             cmap="YlGnBu",
-#             cbar_kws={'label': 'Missing Data'})
-# plt.show()
-
-
-# for i in missing_columns:
-#     if sum(data[i].isnull()) == 446893:
-#         print(i)
-#         print(sum(data[i].isnull()))
-#     else:
-#         print(i)
-#         print(sum(data[i].isnull()))
 
 
 bin_cols = ['event30', 'event90', 'death30', 'death90', 'visit_mh', 'ac1', 'ac2', 'ac3', 'ac4', 'ac5', 'ac1f', 'ac3f', 'ac4f', 'ac5f', 'Enrolled', 'medicaid', 'commercial', 'privatepay', 'statesubsidized', 'selffunded', 'medicare', 'highdedectible', 'other', 'first_visit', 'female', 'dep_dx_pre5y', 'anx_dx_pre5y', 'bip_dx_pre5y', 'sch_dx_pre5y', 'oth_dx_pre5y', 'dem_dx_pre5y', 'add_dx_pre5y', 'asd_dx_pre5y', 'per_dx_pre5y', 'alc_dx_pre5y', 'pts_dx_pre5y', 'eat_dx_pre5y', 'tbi_dx_pre5y', 'dru_dx_pre5y', 'antidep_rx_pre3m', 'benzo_rx_pre3m', 'hypno_rx_pre3m', 'sga_rx_pre3m', 'mh_ip_pre3m', 'mh_op_pre3m', 'mh_ed_pre3m', 'any_sui_att_pre3m', 'lvi_sui_att_pre3m', 'ovi_sui_att_pre3m', 'any_inj_poi_pre3m', 'current_pregnancy', 'del_pre_1_90', 'del_pre_1_180', 'del_pre_1_365', 'charlson_mi', 'charlson_chd', 'charlson_pvd', 'charlson_cvd', 'charlson_dem', 'charlson_cpd', 'charlson_rhd', 'charlson_pud', 'charlson_mlivd', 'charlson_diab', 'charlson_diabc', 'charlson_plegia', 'charlson_ren', 'charlson_malign', 'charlson_slivd', 'charlson_mst', 'charlson_aids', 'raceAsian_asa', 'raceBlack_asa', 'raceHP_asa', 'raceIN_asa', 'raceMUOT_asa', 'raceUN_asa', 'hispanic_asa', 'raceAsian', 'raceBlack', 'raceHP', 'raceIN', 'raceMUOT', 'raceUN', 'raceWH', 'hispanic', 'raceAsian_f', 'raceBlack_f', 'raceHP_f', 'raceIN_f', 'raceMUOT_f', 'raceUN_f', 'hispanic_f', 'census_missing', 'hhld_inc_It40k', 'coll_deg_It25p', 'phqmode90_0', 'phqmode90_1', 'phqmode90_2', 'phqmax90_0', 'phqmax90_1', 'phqmax90_2', 'phqmax90_3', 'phqmode183_0', 'phqmode183_1', 'phqmode183_2', 'phqmax183_0', 'phqmax183_1', 'phqmax183_2', 'phqmax183_3', 'phqmode365_0', 'phqmode365_1', 'phqmode365_2', 'phqmax365_0', 'phqmax365_1', 'phqmax365_2', 'phqmax365_3', 'raceAsian_de', 'raceBlack_de', 'raceHP_de', 'raceIN_de', 'raceMUOT_de', 'raceUN_de', 'hispanic_de', 'raceAsian_an', 'raceBlack_an', 'raceHP_an', 'raceIN_an', 'raceMUOT_an', 'raceUN_an', 'hispanic_an', 'raceAsian_bi', 'raceBlack_bi', 'raceHP_bi', 'raceIN_bi', 'raceMUOT_bi', 'raceUN_bi', 'hispanic_bi', 'raceAsian_sc', 'raceBlack_sc', 'raceHP_sc', 'raceIN_sc', 'raceMUOT_sc', 'raceUN_sc', 'hispanic_sc', 'phq8_missing', 'phq8_missing_f', 'q9_0', 'q9_1', 'q9_2', 'q9_3', 'q9_0_f', 'q9_1_f', 'q9_2_f', 'q9_3_f', 'raceAsian_q90', 'raceBlack_q90', 'raceHP_q90', 'raceIN_q90', 'raceMUOT_q90', 'raceUN_q90', 'hispanic_q90', 'raceAsian_q91', 'raceBlack_q91', 'raceHP_q91', 'raceIN_q91', 'raceMUOT_q91', 'raceUN_q91', 'hispanic_q91', 'raceAsian_q92', 'raceBlack_q92', 'raceHP_q92', 'raceIN_q92', 'raceMUOT_q92', 'raceUN_q92', 'hispanic_q92', 'raceAsian_q93', 'raceBlack_q93', 'raceHP_q93', 'raceIN_q93', 'raceMUOT_q93', 'raceUN_q93', 'hispanic_q93', 'q9_0_de', 'q9_1_de', 'q9_2_de', 'q9_3_de', 'q9_0_an', 'q9_1_an', 'q9_2_an', 'q9_3_an', 'q9_0_bi', 'q9_1_bi', 'q9_2_bi', 'q9_3_bi', 'q9_0_sc', 'q9_1_sc', 'q9_2_sc', 'q9_3_sc', 'q9_0_al', 'q9_1_al', 'q9_2_al', 'q9_3_al', 'q9_0_dr', 'q9_1_dr', 'q9_2_dr', 'q9_3_dr', 'q9_0_pe', 'q9_1_pe', 'q9_2_pe', 'q9_3_pe', 'phqMax90_0_q90', 'phqMax90_1_q90', 'phqMax90_2_q90', 'phqMax90_3_q90', 'phqMax90_0_q91', 'phqMax90_1_q91', 'phqMax90_2_q91', 'phqMax90_3_q91', 'phqMax90_0_q92', 'phqMax90_1_q92', 'phqMax90_2_q92', 'phqMax90_3_q92', 'phqMax90_0_q93', 'phqMax90_1_q93', 'phqMax90_2_q93', 'phqMax90_3_q93']
@@ -213,20 +199,12 @@ y_test_data_options = [pc_gt, non_pc_gt]
 X_gt = X_test_data_options[test_data_idx]
 y_gt = y_test_data_options[test_data_idx]
 
-# asian_pc = pc_data['raceAsian'].dropna().tolist()
-# black_pc = pc_data['raceBlack'].dropna().tolist()
-# hp_pc = pc_data['raceHP'].dropna().tolist()
-# native_pc = pc_data['raceIN'].dropna().tolist()
-# -------------------- muot_pc = pc_data['raceMUOT'].dropna().tolist()
-# unknown_pc = pc_data['raceUN'].dropna().tolist()
-# white_pc = pc_data['raceWH'].dropna().tolist()
-# -------------------- hispanic_pc = pc_data['hispanic'].dropna().tolist()
 
 
 if test_data_idx == 0:
     # PC data
     print("PC DATA")
-    # subset_df = pc_data[['female']]
+    
     # print(subset_df.head(50))
     sensitive_race_ethnic = []
     for index, row in pc_data.iterrows():
@@ -255,11 +233,10 @@ preds = model.predict(X_gt.values)
 dpr_diff = demographic_parity_difference(y_true=y_gt.values, y_pred=preds, sensitive_features=sensitive_race_ethnic)
 eqodd_diff = equalized_odds_difference(y_true=y_gt.values, y_pred=preds, sensitive_features=sensitive_race_ethnic)
 
+# calculate fairness metric ratios 
 dpr_ratio = demographic_parity_ratio(y_true=y_gt.values, y_pred=preds, sensitive_features=sensitive_race_ethnic)
 eqodd_ratio = equalized_odds_ratio(y_true=y_gt.values, y_pred=preds, sensitive_features=sensitive_race_ethnic)
 
-# fairlearn.metrics.demographic_parity_ratio(y_true, y_pred, *, sensitive_features, method='between_groups', sample_weight=None)
-# fairlearn.metrics.equalized_odds_ratio(y_true, y_pred, *, sensitive_features, method='between_groups', sample_weight=None)
 
 print('Demographic parity difference:', dpr_diff)
 print('Equalized odds difference:', eqodd_diff)
@@ -274,10 +251,4 @@ df['Demographic parity ratio'] = pd.Series(dpr_ratio)
 df['Equalized odds ratio'] = pd.Series(eqodd_ratio)
 
 df.to_csv('logs_MH_subset/fairness_ethnicity/quantify/' + save_file + '_quantify.csv', index=False)
-
-# dpr_nonpc = demographic_parity_difference(y_true=non_pc_gt.values, y_pred=y_pred_nonpc, sensitive_features=sensitive_race_ethnic_nonpc)
-# eqor_nonpc = equalized_odds_difference(y_true=non_pc_gt.values, y_pred=y_pred_nonpc, sensitive_features=sensitive_race_ethnic_nonpc)
-
-
-
 
