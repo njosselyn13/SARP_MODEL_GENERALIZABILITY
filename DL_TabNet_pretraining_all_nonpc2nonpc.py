@@ -47,7 +47,7 @@ torch.manual_seed(SEED)
 
 start_time = time.time()
 
-# In[2]:
+
 
 print()
 print('----------------------------------------')
@@ -59,6 +59,7 @@ print()
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for 13+ years old
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -67,83 +68,73 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
+# drop columns not overlapping with MHRN protocol
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
 
-# # In[3]:
 # print(data)
 #
 #
-# # In[4]:
 # print(data.columns[316:329])
 #
 #
-# # In[5]:
 # print(sum(data["PRIMARY_CARE_VISIT"] == 1))
 #
 #
-# # In[6]:
 # print(sum(data["PRIMARY_CARE_VISIT"] == 0))
 
 
-# In[7]:
 data["event90"] = data["event90"].fillna(value=0)
 
 
-
+# drop empty cols to replace
 data = data.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# replacement correct columns
 data.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
 
 
-# In[8]:
 # print(sum(data["event90"].isna()))
 
 
 # ## Selecting Primary Care data where Flag(PRIMARY_CARE_VISIT) == 1
 
-# In[9]:
 pc_data = data[data["PRIMARY_CARE_VISIT"] == 1]
 # print(pc_data)
 
 
-# In[10]:
 y = pc_data["event90"]
 
 
-# In[11]:
 # print(pc_data)
 
 
 # ## Selecting Non Primary Care data where Flag(PRIMARY_CARE_VISIT) == 0
 
-# In[12]:
+
 non_pc_data = data[data["PRIMARY_CARE_VISIT"] == 0]
 # print(non_pc_data)
 
 
-# In[13]:
+
 y_non_pc = non_pc_data["event90"]
 
 
-# In[14]:
+
 # print(np.unique(y_non_pc, return_counts=True))
 
 
-# In[15]:
+
 # print(non_pc_data)
 
 
-# ## Scaling data
 
-# # In[16]:
 # pc_columns_to_scale = ["age","days_since_prev","charlson_score","charlson_a","dep_dx_pre5y_cumulative_a","anx_dx_pre5y_cumulative_a","bip_dx_pre5y_cumulative_a","sch_dx_pre5y_cumulative_a","phqnumber90","phqnumber183","phqnumber365","phq8_index_score_calc_f","raceAsian_8","raceIN_8","hispanic_8","age_8","q9_0_a","q9_1_8","q9_2_8","q9_3_8","q9_1_c","q9_2_c","q9_3_c","any_sui_att_pre5y_cumulative_a","any_sui_att_pre5y_cumulative_8","any_sui_att_pre5y_cumulative_c"]
 #
 #
-# # In[17]:
 # count = 0
 # for i in pc_columns_to_scale:
 #     if i in pc_data.columns:
@@ -153,28 +144,22 @@ y_non_pc = non_pc_data["event90"]
 # print(count)
 #
 #
-# # In[18]:
 # pc_data[pc_columns_to_scale] = scale(pc_data[pc_columns_to_scale])
 
 
-# In[19]:
 # print(pc_data)
 
 
-# In[20]:
 pc_data = pc_data.drop(columns=["PRIMARY_CARE_VISIT","person_id","event30","event90","death30","death90","visit_mh"])
 # print(pc_data)
 
 
-# In[21]:
 # print(pc_data.columns)
 
 
-# # In[22]:
 # non_pc_columns_to_scale = ["age","days_since_prev","charlson_score","charlson_a","dep_dx_pre5y_cumulative_a","anx_dx_pre5y_cumulative_a","bip_dx_pre5y_cumulative_a","sch_dx_pre5y_cumulative_a","phqnumber90","phqnumber183","phqnumber365","phq8_index_score_calc_f","raceAsian_8","raceIN_8","hispanic_8","age_8","q9_0_a","q9_1_8","q9_2_8","q9_3_8","q9_1_c","q9_2_c","q9_3_c","any_sui_att_pre5y_cumulative_a","any_sui_att_pre5y_cumulative_8","any_sui_att_pre5y_cumulative_c"]
 #
 #
-# # In[23]:
 # count = 0
 # for i in non_pc_columns_to_scale:
 #     if i in non_pc_data.columns:
@@ -184,26 +169,21 @@ pc_data = pc_data.drop(columns=["PRIMARY_CARE_VISIT","person_id","event30","even
 # print(count)
 #
 #
-# # In[24]:
 # non_pc_data[non_pc_columns_to_scale] = scale(non_pc_data[non_pc_columns_to_scale])
 # # print(non_pc_data)
 
 
 
-# In[25]:
 non_pc_data = non_pc_data.drop(columns=["PRIMARY_CARE_VISIT","person_id","event30","event90","death30","death90","visit_mh"])
 # print(non_pc_data)
 
 
-# In[26]:
 # print(non_pc_data.columns)
 
-# In[16]:
 # pc_columns_to_scale = ["age","days_since_prev","charlson_score","charlson_a","dep_dx_pre5y_cumulative_a","anx_dx_pre5y_cumulative_a","bip_dx_pre5y_cumulative_a","sch_dx_pre5y_cumulative_a","phqnumber90","phqnumber183","phqnumber365","phq8_index_score_calc_f","raceAsian_8","raceIN_8","hispanic_8","age_8","q9_0_a","q9_1_8","q9_2_8","q9_3_8","q9_1_c","q9_2_c","q9_3_c","any_sui_att_pre5y_cumulative_a","any_sui_att_pre5y_cumulative_8","any_sui_att_pre5y_cumulative_c"]
 pc_columns_to_scale = ['age', 'days_since_prev', 'dep_dx_pre5y_noi_cumulative', 'anx_dx_pre5y_noi_cumulative', 'bip_dx_pre5y_noi_cumulative', 'sch_dx_pre5y_noi_cumulative', 'oth_dx_pre5y_noi_cumulative', 'dem_dx_pre5y_noi_cumulative', 'add_dx_pre5y_noi_cumulative', 'asd_dx_pre5y_noi_cumulative', 'per_dx_pre5y_noi_cumulative', 'alc_dx_pre5y_noi_cumulative', 'pts_dx_pre5y_noi_cumulative', 'eat_dx_pre5y_noi_cumulative', 'tbi_dx_pre5y_noi_cumulative', 'dru_dx_pre5y_noi_cumulative', 'antidep_rx_pre1y_cumulative', 'antidep_rx_pre5y_cumulative', 'benzo_rx_pre1y_cumulative', 'benzo_rx_pre5y_cumulative', 'hypno_rx_pre1y_cumulative', 'hypno_rx_pre5y_cumulative', 'sga_rx_pre1y_cumulative', 'sga_rx_pre5y_cumulative', 'mh_ip_pre1y_cumulative', 'mh_ip_pre5y_cumulative', 'mh_op_pre1y_cumulative', 'mh_op_pre5y_cumulative', 'mh_ed_pre1y_cumulative', 'mh_ed_pre5y_cumulative', 'any_sui_att_pre1y_cumulative', 'any_sui_att_pre5y_cumulative', 'lvi_sui_att_pre1y_cumulative', 'lvi_sui_att_pre5y_cumulative', 'ovi_sui_att_pre1y_cumulative', 'ovi_sui_att_pre5y_cumulative', 'any_inj_poi_pre1y_cumulative', 'any_inj_poi_pre5y_cumulative', 'any_sui_att_pre5y_cumulative_f', 'any_sui_att_pre5y_cumulative_a', 'charlson_score', 'charlson_a', 'phqnumber90', 'phqnumber183', 'phqnumber365', 'dep_dx_pre5y_cumulative', 'dep_dx_pre5y_cumulative_f', 'dep_dx_pre5y_cumulative_a', 'anx_dx_pre5y_cumulative', 'anx_dx_pre5y_cumulative_f', 'anx_dx_pre5y_cumulative_a', 'bip_dx_pre5y_cumulative', 'bip_dx_pre5y_cumulative_f', 'bip_dx_pre5y_cumulative_a', 'sch_dx_pre5y_cumulative', 'sch_dx_pre5y_cumulative_f', 'sch_dx_pre5y_cumulative_a', 'oth_dx_pre5y_cumulative', 'dem_dx_pre5y_cumulative', 'add_dx_pre5y_cumulative', 'asd_dx_pre5y_cumulative', 'per_dx_pre5y_cumulative', 'alc_dx_pre5y_cumulative', 'dru_dx_pre5y_cumulative', 'pts_dx_pre5y_cumulative', 'eat_dx_pre5y_cumulative', 'tbi_dx_pre5y_cumulative', 'phq8_index_score_calc', 'phq8_index_score_calc_f', 'raceAsian_8', 'raceBlack_8', 'raceHP_8', 'raceIN_8', 'raceMUOT_8', 'raceUN_8', 'hispanic_8', 'age_8', 'q9_0_a', 'q9_1_a', 'q9_2_a', 'q9_3_a', 'q9_0_8', 'q9_1_8', 'q9_2_8', 'q9_3_8', 'q9_0_c', 'q9_1_c', 'q9_2_c', 'q9_3_c', 'any_sui_att_pre5y_cumulative_8', 'any_sui_att_pre5y_cumulative_c', 'any_sui_att_pre5y_cumulative_de', 'any_sui_att_pre5y_cumulative_an', 'any_sui_att_pre5y_cumulative_bi', 'any_sui_att_pre5y_cumulative_sc', 'any_sui_att_pre5y_cumulative_al', 'any_sui_att_pre5y_cumulative_dr', 'any_sui_att_pre5y_cumulative_pe']
 # these columns to scale are same as all the numeric (num_cols) columns
 
-# In[17]:
 count = 0
 for i in pc_columns_to_scale:
     if i in pc_data.columns:
@@ -213,7 +193,6 @@ for i in pc_columns_to_scale:
 print(count)
 
 
-# In[18]:
 pc_data[pc_columns_to_scale] = scale(pc_data[pc_columns_to_scale])
 
 
@@ -221,15 +200,12 @@ pc_data[pc_columns_to_scale] = scale(pc_data[pc_columns_to_scale])
 
 # ### Dealing with missing values
 
-# In[27]:
 missing_columns = pc_data.columns[pc_data.isnull().any()]
 
 
-# In[28]:
 # print(missing_columns)
 
 
-# In[29]:
 plt.figure(figsize=(10,6))
 sns.heatmap(pc_data[missing_columns].isna().transpose(),
             cmap="YlGnBu",
@@ -237,7 +213,6 @@ sns.heatmap(pc_data[missing_columns].isna().transpose(),
 plt.show()
 
 
-# In[30]:
 for i in missing_columns:
     if sum(pc_data[i].isnull()) == pc_data.shape[0]: #188894:
         print(i)
@@ -247,7 +222,6 @@ for i in missing_columns:
         print(sum(pc_data[i].isnull()))
 
 
-# # In[31]:
 # for i in missing_columns:
 #     if sum(pc_data[i].isnull()) == 178460: #188894:
 #         pc_data[i].fillna(value=0,inplace=True)
@@ -291,13 +265,11 @@ for i in missing_columns:
 
 
 
-
-# In[22]:
 # non_pc_columns_to_scale = ["age","days_since_prev","charlson_score","charlson_a","dep_dx_pre5y_cumulative_a","anx_dx_pre5y_cumulative_a","bip_dx_pre5y_cumulative_a","sch_dx_pre5y_cumulative_a","phqnumber90","phqnumber183","phqnumber365","phq8_index_score_calc_f","raceAsian_8","raceIN_8","hispanic_8","age_8","q9_0_a","q9_1_8","q9_2_8","q9_3_8","q9_1_c","q9_2_c","q9_3_c","any_sui_att_pre5y_cumulative_a","any_sui_att_pre5y_cumulative_8","any_sui_att_pre5y_cumulative_c"]
 non_pc_columns_to_scale = ['age', 'days_since_prev', 'dep_dx_pre5y_noi_cumulative', 'anx_dx_pre5y_noi_cumulative', 'bip_dx_pre5y_noi_cumulative', 'sch_dx_pre5y_noi_cumulative', 'oth_dx_pre5y_noi_cumulative', 'dem_dx_pre5y_noi_cumulative', 'add_dx_pre5y_noi_cumulative', 'asd_dx_pre5y_noi_cumulative', 'per_dx_pre5y_noi_cumulative', 'alc_dx_pre5y_noi_cumulative', 'pts_dx_pre5y_noi_cumulative', 'eat_dx_pre5y_noi_cumulative', 'tbi_dx_pre5y_noi_cumulative', 'dru_dx_pre5y_noi_cumulative', 'antidep_rx_pre1y_cumulative', 'antidep_rx_pre5y_cumulative', 'benzo_rx_pre1y_cumulative', 'benzo_rx_pre5y_cumulative', 'hypno_rx_pre1y_cumulative', 'hypno_rx_pre5y_cumulative', 'sga_rx_pre1y_cumulative', 'sga_rx_pre5y_cumulative', 'mh_ip_pre1y_cumulative', 'mh_ip_pre5y_cumulative', 'mh_op_pre1y_cumulative', 'mh_op_pre5y_cumulative', 'mh_ed_pre1y_cumulative', 'mh_ed_pre5y_cumulative', 'any_sui_att_pre1y_cumulative', 'any_sui_att_pre5y_cumulative', 'lvi_sui_att_pre1y_cumulative', 'lvi_sui_att_pre5y_cumulative', 'ovi_sui_att_pre1y_cumulative', 'ovi_sui_att_pre5y_cumulative', 'any_inj_poi_pre1y_cumulative', 'any_inj_poi_pre5y_cumulative', 'any_sui_att_pre5y_cumulative_f', 'any_sui_att_pre5y_cumulative_a', 'charlson_score', 'charlson_a', 'phqnumber90', 'phqnumber183', 'phqnumber365', 'dep_dx_pre5y_cumulative', 'dep_dx_pre5y_cumulative_f', 'dep_dx_pre5y_cumulative_a', 'anx_dx_pre5y_cumulative', 'anx_dx_pre5y_cumulative_f', 'anx_dx_pre5y_cumulative_a', 'bip_dx_pre5y_cumulative', 'bip_dx_pre5y_cumulative_f', 'bip_dx_pre5y_cumulative_a', 'sch_dx_pre5y_cumulative', 'sch_dx_pre5y_cumulative_f', 'sch_dx_pre5y_cumulative_a', 'oth_dx_pre5y_cumulative', 'dem_dx_pre5y_cumulative', 'add_dx_pre5y_cumulative', 'asd_dx_pre5y_cumulative', 'per_dx_pre5y_cumulative', 'alc_dx_pre5y_cumulative', 'dru_dx_pre5y_cumulative', 'pts_dx_pre5y_cumulative', 'eat_dx_pre5y_cumulative', 'tbi_dx_pre5y_cumulative', 'phq8_index_score_calc', 'phq8_index_score_calc_f', 'raceAsian_8', 'raceBlack_8', 'raceHP_8', 'raceIN_8', 'raceMUOT_8', 'raceUN_8', 'hispanic_8', 'age_8', 'q9_0_a', 'q9_1_a', 'q9_2_a', 'q9_3_a', 'q9_0_8', 'q9_1_8', 'q9_2_8', 'q9_3_8', 'q9_0_c', 'q9_1_c', 'q9_2_c', 'q9_3_c', 'any_sui_att_pre5y_cumulative_8', 'any_sui_att_pre5y_cumulative_c', 'any_sui_att_pre5y_cumulative_de', 'any_sui_att_pre5y_cumulative_an', 'any_sui_att_pre5y_cumulative_bi', 'any_sui_att_pre5y_cumulative_sc', 'any_sui_att_pre5y_cumulative_al', 'any_sui_att_pre5y_cumulative_dr', 'any_sui_att_pre5y_cumulative_pe']
 # these columns to scale are same as all the numeric (num_cols) columns
 
-# In[23]:
+
 count = 0
 for i in non_pc_columns_to_scale:
     if i in non_pc_data.columns:
@@ -307,17 +279,14 @@ for i in non_pc_columns_to_scale:
 print(count)
 
 
-# In[24]:
 non_pc_data[non_pc_columns_to_scale] = scale(non_pc_data[non_pc_columns_to_scale])
 # print(non_pc_data)
 
 
-# In[32]:
 missing_columns = non_pc_data.columns[non_pc_data.isnull().any()]
 # print(missing_columns)
 
 
-# In[33]:
 plt.figure(figsize=(10,6))
 sns.heatmap(non_pc_data[missing_columns].isna().transpose(),
             cmap="YlGnBu",
@@ -325,7 +294,6 @@ sns.heatmap(non_pc_data[missing_columns].isna().transpose(),
 plt.show()
 
 
-# In[34]:
 for i in missing_columns:
     if sum(non_pc_data[i].isnull()) == non_pc_data.shape[0]: #257999:
         print(i)
@@ -335,7 +303,6 @@ for i in missing_columns:
         print(sum(non_pc_data[i].isnull()))
 
 
-# # In[35]:
 # for i in missing_columns:
 #     if sum(non_pc_data[i].isnull()) == 233585: #257999:
 #         non_pc_data[i].fillna(value=0,inplace=True)
@@ -379,28 +346,22 @@ for i in missing_columns:
 
 # ### Splitting data into train and validation
 
-# In[36]:
 train_X, X_test, train_y, y_test = train_test_split(pc_data, y, test_size=0.35, random_state=42, stratify = y)
 
 
-# In[37]:
 X_train, X_val, y_train, y_val = train_test_split(train_X, train_y, test_size=0.35, random_state=42, stratify = train_y)
 
 
-# In[38]:
 train_X_non_pc, X_test_non_pc, train_y_non_pc, y_test_non_pc = train_test_split(non_pc_data, y_non_pc, test_size=0.35, random_state=42, stratify = y_non_pc)
 
 
-# In[39]:
 X_train_non_pc, X_val_non_pc, y_train_non_pc, y_val_non_pc = train_test_split(train_X_non_pc, train_y_non_pc, test_size=0.35, random_state=42, stratify = train_y_non_pc)
 
 
-# In[33]:
 X_train_pretrain = pd.concat([X_train,X_train_non_pc])
 # print(X_train)
 
 
-# In[34]:
 y_train_pretrain = pd.concat([y_train, y_train_non_pc])
 
 
@@ -466,7 +427,7 @@ def objective_pretrain(trial):
     return unsupervised_model.best_cost
 
 
-# In[47]:
+
 print("TabNet Pre-Training Optuna Tuning")
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 sampler = optuna.samplers.TPESampler(seed=1)
@@ -509,7 +470,6 @@ unsupervised_model.fit(
 )
 
 
-# In[45]:
 def objective(trial):
     mask_type = trial.suggest_categorical("mask_type", ["entmax", "sparsemax"])
     # n_d = trial.suggest_int("n_da", 8, 64, step=8)
@@ -550,7 +510,6 @@ def objective(trial):
 
     return valid_auc
 
-# In[47]:
 
 print()
 print("TabNet Classifier Optuna Tuning")
@@ -596,7 +555,6 @@ print('Training TabNet, with optimized Optuna params, weights=1, Train Non PC, T
 print()
 
 
-# In[51]:
 clf.fit(
       X_train_non_pc.values, y_train_non_pc,weights=1,
       eval_set=[(X_val_non_pc.values, y_val_non_pc)],
@@ -735,9 +693,6 @@ print()
 print()
 
 
-
-# # ### Wei
-
 end_time = time.time()
 print(f"Time taken: {end_time - start_time} seconds")
 
@@ -791,4 +746,5 @@ print(f"Time taken: {end_time - start_time} seconds")
 # print()
 # print()
 # print('-----------------------------')
+
 # print()
