@@ -17,17 +17,16 @@ random.seed(SEED)
 np.random.seed(SEED)
 # torch.manual_seed(SEED)
 
-# pth_MHRN_OP_new = 'C:\\Users\\Nick\\Desktop\\WPI\\UMass\\MHRN_Project-main\\MHRN_Project-main\\MHRN-OP-new.csv'
-# pth_MHRN_OP_new = 'C:\\Users\\Nick\\Desktop\\WPI\\UMass\\MHRN_Project-main\\MHRN_Project-main\\MHRN4_with_zip_income_college_binarized_new.csv'
-# pth_pc_coeff_df = 'C:\\Users\\Nick\\Desktop\\WPI\\UMass\\MHRN_Project-main\\MHRN_Project-main\\Primary care Coefficients.xlsx'
+
 # pth_MHRN_OP_new = 'MHRN4_with_zip_income_college_binarized_new.csv'
 pth_MHRN_OP_new = 'combined_pc_mh_data.csv'
+
+# this script is for PC coeff from:  https://github.com/MHResearchNetwork/srpm-model
 pth_pc_coeff_df = 'Primary care Coefficients.xlsx'
-# pth_MHRN_OP_new = 'MHRN-OP-new.csv'
-# pth_pc_coeff_df = 'Primary care Coefficients.xlsx'
+
 
 use_0s = True #True (True = pre-trained with 102 features only, False pre-trained with 102 features and then use the remaining trained from scratch 218 features)
-use_balanced = True
+use_balanced = True # doesnt matter here, no training
 
 # compare my cols to MHRN 102 cols
 mhrn_pc_coeff_df = pd.read_excel(pth_pc_coeff_df)
@@ -52,6 +51,7 @@ our_data_df = our_data_df.drop(columns=columns_to_drop_idx)
 
 our_data_df = our_data_df.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix dropped cols above
 our_data_df.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
@@ -63,6 +63,7 @@ our_data_df.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt2
 
 # print(mhrn_pc_coeff_df)
 
+# col names
 mhrn_col_names = mhrn_pc_coeff_df['event90'].tolist()
 mhrn_col_names.remove('-------------------------------')
 mhrn_col_names.remove('_cons')
@@ -73,6 +74,8 @@ print('mhrn_col_names:')
 print(mhrn_col_names)
 print(len(mhrn_col_names))
 print()
+
+# coefficients
 mhrn_coeff_int = mhrn_pc_coeff_df['Coef.'].tolist()
 mhrn_coeff_int.remove('------------')
 mhrn_int = mhrn_coeff_int[0]
@@ -125,7 +128,7 @@ print(joined_dict)
 print(len(joined_dict))
 print()
 
-# is lvi_sui_att_pre5y same as lvi_sui_att_pre5y_cumulative???
+# correct mismatched names between mhrn and our data 
 our_problem_keys_names = ['highdedectible', 'lvi_sui_att_pre5y', 'raceAsian', 'raceBlack', 'coll_deg_It25p',
                       'raceBlack_de', 'raceBlack_an', 'raceUN_bi', 'raceAsian_8', 'raceIN_8']
 
@@ -421,3 +424,4 @@ print()
 #                         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
 #
 # print(len(mhrn_pc_coeff[0]))
+
