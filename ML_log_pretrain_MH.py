@@ -17,17 +17,18 @@ random.seed(SEED)
 np.random.seed(SEED)
 # torch.manual_seed(SEED)
 
-# pth_MHRN_OP_new = 'C:\\Users\\Nick\\Desktop\\WPI\\UMass\\MHRN_Project-main\\MHRN_Project-main\\MHRN-OP-new.csv'
-# pth_MHRN_OP_new = 'C:\\Users\\Nick\\Desktop\\WPI\\UMass\\MHRN_Project-main\\MHRN_Project-main\\MHRN4_with_zip_income_college_binarized_new.csv'
-# pth_pc_coeff_df = 'C:\\Users\\Nick\\Desktop\\WPI\\UMass\\MHRN_Project-main\\MHRN_Project-main\\Primary care Coefficients.xlsx'
+
 # pth_MHRN_OP_new = 'MHRN4_with_zip_income_college_binarized_new.csv'
 pth_MHRN_OP_new = 'combined_pc_mh_data.csv'
-pth_pc_coeff_df = 'Mental health specialty coefficients.xlsx'
-# pth_MHRN_OP_new = 'MHRN-OP-new.csv'
-# pth_pc_coeff_df = 'Primary care Coefficients.xlsx'
 
-use_0s = True #True (True = pre-trained with 94 features only, False pre-trained with 94 features and then use the remaining trained from scratch 226 features)
-use_balanced = False
+# use this for mh
+pth_pc_coeff_df = 'Mental health specialty coefficients.xlsx' # from https://github.com/MHResearchNetwork/srpm-model 
+
+# use this for pc
+# pth_pc_coeff_df = 'Primary care Coefficients.xlsx' # from https://github.com/MHResearchNetwork/srpm-model
+
+use_0s = True #True (True = pre-trained with 94 features only, False pre-trained with 94 features and then use the remaining trained from scratch 226 features) or 102 for PC
+use_balanced = False # balanced or not, doesnt matter her because models are pretrained
 
 # compare my cols to MHRN 102 cols
 mhrn_pc_coeff_df = pd.read_excel(pth_pc_coeff_df)
@@ -35,6 +36,7 @@ our_data_df1 = pd.read_csv(pth_MHRN_OP_new)
 
 # our_data_df = our_data_df1
 
+# filter for patients 13+
 our_data_df = our_data_df1[our_data_df1['age'] >= 13]
 min_value = our_data_df['age'].min()
 print()
@@ -46,23 +48,21 @@ print()
 # columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 # our_data_df = our_data_df.drop(columns=columns_to_drop_idx)
 
+# drop cols that dont overlap with mhrn protocol
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 our_data_df = our_data_df.drop(columns=columns_to_drop_idx)
 
 
 our_data_df = our_data_df.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix dropped cols above
 our_data_df.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
 
-# mhrn_pc_coeff_df = pd.read_excel(pth_pc_coeff_df)
-# our_data_df = pd.read_csv(pth_MHRN_OP_new)
+# cleanup and remove excess cells in the loaded files
 
-# load MHRN pc coeff info excel
-
-# print(mhrn_pc_coeff_df)
-
+# column names
 mhrn_col_names = mhrn_pc_coeff_df['event90'].tolist()
 mhrn_col_names.remove('-------------------------------')
 mhrn_col_names.remove('_cons')
@@ -73,6 +73,8 @@ print('mhrn_col_names:')
 print(mhrn_col_names)
 print(len(mhrn_col_names))
 print()
+
+# released coefficients
 mhrn_coeff_int = mhrn_pc_coeff_df['Coef.'].tolist()
 mhrn_coeff_int.remove('------------')
 mhrn_int = mhrn_coeff_int[0]
@@ -125,7 +127,7 @@ print(joined_dict)
 print(len(joined_dict))
 print()
 
-# is lvi_sui_att_pre5y same as lvi_sui_att_pre5y_cumulative???
+# correct some name inconsistencies between our data and mhrn data
 our_problem_keys_names = ['highdedectible', 'lvi_sui_att_pre5y', 'raceAsian', 'raceBlack', 'coll_deg_It25p',
                       'raceBlack_de', 'raceBlack_an', 'raceUN_bi', 'raceAsian_8', 'raceIN_8']
 
@@ -434,3 +436,4 @@ print()
 #                         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
 #
 # print(len(mhrn_pc_coeff[0]))
+
