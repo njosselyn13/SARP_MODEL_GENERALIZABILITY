@@ -1,14 +1,3 @@
-# import pandas as pd
-# import numpy as np
-# import os
-# import matplotlib.pyplot as plt
-# from sklearn.preprocessing import scale
-# import seaborn as sns
-# import joblib
-# import argparse
-
-
-
 import numpy as np
 # import tensorflow as tf
 import pandas as pd
@@ -54,10 +43,10 @@ random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
 
-# data = pd.read_csv('MHRN-OP-new.csv')
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -66,6 +55,7 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
+# drop cols not in mhrn 
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
@@ -78,6 +68,7 @@ data = data.drop(columns=["person_id","event30","death30","death90","visit_mh"])
 
 data = data.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix dropped cols above 
 data.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
@@ -104,32 +95,6 @@ data[columns_to_scale] = scale(data[columns_to_scale])
 # ### Dealing with missing values
 
 missing_columns = data.columns[data.isnull().any()]
-
-
-# plt.figure(figsize=(10,6))
-# sns.heatmap(data[missing_columns].isna().transpose(),
-#             cmap="YlGnBu",
-#             cbar_kws={'label': 'Missing Data'})
-# plt.show()
-
-
-# for i in missing_columns:
-#     if sum(data[i].isnull()) == data.shape[0]:
-#         print(i)
-#         print(sum(data[i].isnull()))
-#     else:
-#         print(i)
-#         print(sum(data[i].isnull()))
-
-
-# for i in missing_columns:
-#     if sum(data[i].isnull()) == data.shape[0]:
-#         data[i].fillna(value=0,inplace=True)
-#         # print(sum(data[i].isnull()))
-#     else:
-#         mean_value=data[i].mean()
-#         data[i].fillna(value=mean_value,inplace=True)
-#         # print(sum(data[i].isnull()))
 
 
 
@@ -191,7 +156,7 @@ X_train_non_pc, X_val_non_pc, y_train_non_pc, y_val_non_pc = train_test_split(tr
 
 
 
-# Just runnin gon TEST data
+# Just running on TEST data
 ###
 pc_data = X_test_pc
 non_pc_data = X_test_non_pc
@@ -206,7 +171,7 @@ print()
 #########################################################################################
 
 
-# GENDER
+# ETHNICITY
 print('ETHNICITY')
 
 ethnicity_names = ['hispanic'] #, 'not hispanic']
@@ -263,6 +228,7 @@ print('PC:')
 for rc in range(0, len(ethnicity_names)):
     rn = ethnicity_names[rc]
     print(rn)
+    # ignore that it says female, male -- adopted from code for sex groups (female means hispanic, male means not hispanic, just a variable name not indicative of anything more)
     pc_female_attempt = pc_data[(pc_data['event90'] == 1) & (pc_data[rn] == 1)]
     pc_female_NO_attempt = pc_data[(pc_data['event90'] == 0) & (pc_data[rn] == 1)]
     pc_male_attempt = pc_data[(pc_data['event90'] == 1) & (pc_data[rn] == 0)]
@@ -280,6 +246,7 @@ print('Non-PC:')
 for rc in range(0, len(ethnicity_names)):
     rn = ethnicity_names[rc]
     print(rn)
+    # ignore that it says female, male -- adopted from code for sex groups (female means hispanic, male means not hispanic, just a variable name not indicative of anything more)
     nonpc_female_attempt = non_pc_data[(non_pc_data['event90'] == 1) & (non_pc_data[rn] == 1)]
     nonpc_female_NO_attempt = non_pc_data[(non_pc_data['event90'] == 0) & (non_pc_data[rn] == 1)]
     nonpc_male_attempt = non_pc_data[(non_pc_data['event90'] == 1) & (non_pc_data[rn] == 0)]
@@ -329,8 +296,6 @@ save_file = args.sv
 model_l = args.m
 test_data_idx = args.td
 
-
-# gender_names_new = ['female', 'male']
 
 # if test_data_idx == 0:
 print('PC:')
@@ -396,9 +361,9 @@ print()
 
 
 data_ethnicities = [data_pc_eth, data_nonpc_eth]
-# data_male = [data_pc_male, data_nonpc_male]
+
 label_ethnicities = [label_pc_eth, label_nonpc_eth]
-# label_male = [label_pc_male, label_nonpc_male]
+
 
 
 X_races = data_ethnicities[test_data_idx]
@@ -453,10 +418,6 @@ for i in range(0, len(ethnicity_names_new)):
     preds = model.predict(X_gt.values)
     pred_probs = model.predict_proba(X_gt.values)
 
-    # get predictions, probabilities, calculate metrics, plots/curves, save for each race to csv
-    # do bootstrapping
-    # ignore 'hispanic', 'raceMUOT' --- there are zero
-    # some races dont have any suicide attempts
 
     for i in range(times):
         pred_idx = []
@@ -581,4 +542,5 @@ for i in range(0, len(ethnicity_names_new)):
 
     # Write DataFrame to CSV
     df.to_csv('logs_MH_subset/fairness_ethnicity/' + race_ + '_' + save_file + '.csv', index=False)
+
 
