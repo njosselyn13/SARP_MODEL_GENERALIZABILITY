@@ -34,6 +34,7 @@ np.random.seed(SEED)
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+ 
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -42,6 +43,7 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
+# drop cols not in mhrn 
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
@@ -59,12 +61,13 @@ data["event90"] = data["event90"].fillna(value=0)
 
 data = data.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix dropped cols above 
 data.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
 
 
-# In[6]:
+# In[6]: 
 # print(sum(data["event90"].isna()))
 
 
@@ -378,6 +381,7 @@ print()
 joblib.dump(clf, 'logs_MH_subset/saved_models/log_reg_320scratch_balanced_MH.pkl')
 print("model saved")
 print()
+
 
 
 
