@@ -60,6 +60,7 @@ print()
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -68,6 +69,7 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
+# drops cols not overlap mhrn
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
@@ -93,6 +95,7 @@ data["event90"] = data["event90"].fillna(value=0)
 
 data = data.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix cols dropped above
 data.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
@@ -136,7 +139,7 @@ y_non_pc = non_pc_data["event90"]
 # print(non_pc_data)
 
 
-# ## Scaling data
+
 
 # # In[16]:
 # pc_columns_to_scale = ["age","days_since_prev","charlson_score","charlson_a","dep_dx_pre5y_cumulative_a","anx_dx_pre5y_cumulative_a","bip_dx_pre5y_cumulative_a","sch_dx_pre5y_cumulative_a","phqnumber90","phqnumber183","phqnumber365","phq8_index_score_calc_f","raceAsian_8","raceIN_8","hispanic_8","age_8","q9_0_a","q9_1_8","q9_2_8","q9_3_8","q9_1_c","q9_2_c","q9_3_c","any_sui_att_pre5y_cumulative_a","any_sui_att_pre5y_cumulative_8","any_sui_att_pre5y_cumulative_c"]
@@ -410,6 +413,7 @@ print('Now using Optuna!!!')
 print('Training TabNet, optimizing with Optuna, weights=1, Train Non PC, Test Non PC')
 print()
 
+# pretraining function
 def objective_pretrain(trial):
     # parameters to tune
     mask_type = trial.suggest_categorical("mask_type", ["entmax", "sparsemax"])
@@ -776,5 +780,6 @@ print()
 
 end_time = time.time()
 print(f"Time taken: {end_time - start_time} seconds")
+
 
 
