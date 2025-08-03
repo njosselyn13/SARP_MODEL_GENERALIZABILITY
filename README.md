@@ -96,6 +96,7 @@ Fairness analysis:
 Other scripts:
 
 - bootstrap_over13.py: perform bootstrapping with 95% confidence interval results on test set for all experiments
+- stat_sig_test_bootstrap.py: calculate all pairwise model statistical significance
 - geenerate_sh_jobs_bootstrap_exps.py: helper function to generate bash scripts to run
 
 
