@@ -52,6 +52,7 @@ start_time = time.time()
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv') #('MHRN-OP-new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+ 
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -132,6 +133,7 @@ data = data.drop(columns=["person_id","event30","death30","death90","visit_mh"])
 
 data = data.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix dropped cols above 
 data.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
@@ -671,7 +673,7 @@ print()
 
 
 end_time = time.time()
-print(f"Time taken to generate SHAP values and plot: {end_time - start_time} seconds")
+print(f"Time taken: {end_time - start_time} seconds")
 
 
 
@@ -685,36 +687,3 @@ print(f"Time taken to generate SHAP values and plot: {end_time - start_time} sec
 ###########################################################
 
 
-
-
-# clf = GradientBoostingClassifier().fit(X_train, y_train)
-#
-# res = clf.score(X_test, y_test)
-# print(res)
-#
-# print()
-#
-# roc_auc = roc_auc_score(y_test, clf.predict_proba(X_test)[:, 1])
-# print(roc_auc)
-
-
-# preds = clf.predict_proba(X_test_pc.values)
-# test_auc = roc_auc_score(y_score=preds[:,1], y_true=y_test_pc)
-# preds_y = clf.predict(X_test_pc.values)
-# preds_valid = clf.predict_proba(X_val_pc.values)
-# valid_auc = roc_auc_score(y_score=preds_valid[:,1], y_true=y_val_pc)
-# print(f"BEST VALID AUC: {valid_auc}")
-# print(f"FINAL TEST AUC: {test_auc}")
-# print("ROC AUC is: ",metrics.roc_auc_score(y_test_pc, clf.predict_proba(X_test_pc.values)[:,1]))
-# print("F1 score is: ", metrics.f1_score(y_test_pc, clf.predict(X_test_pc.values)))
-# print("Precision score is: ", metrics.precision_score(y_test_pc, clf.predict(X_test_pc.values)))
-# print("Recall score is: ", metrics.recall_score(y_test_pc, clf.predict(X_test_pc.values)))
-# print(metrics.classification_report(y_test_pc, preds_y))
-# print(metrics.confusion_matrix(y_test_pc, preds_y))
-# tn, fp, fn, tp = metrics.confusion_matrix(y_test_pc, preds_y).ravel()
-# specificity = tn / (tn+fp)
-# print("Specificity score is: ", specificity)
-# sensitivity = tp / (tp+fn)
-# print("Sensitivity score is: ", sensitivity)
-# print()
-# print()
