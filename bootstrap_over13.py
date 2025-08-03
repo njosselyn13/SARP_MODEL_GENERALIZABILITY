@@ -277,7 +277,7 @@ args = parser.parse_args()
 
 # Load Model
 model_type = args.mt
-save_file = args.sv
+save_file = 'NEWstatsig_' + args.sv
 model_l = args.m
 test_data_idx = args.td
 
@@ -395,34 +395,46 @@ ci_upper_precisions = np.percentile(precisions, 97.5)
 ci_lower_prc_aucs = np.percentile(prc_aucs, 2.5)
 ci_upper_prc_aucs = np.percentile(prc_aucs, 97.5)
 
-results['prc_auc'] = np.mean(prc_aucs)
-results['precision'] = np.mean(precisions)
-results['recall'] = np.mean(recalls)
-results['f1'] = np.mean(f1s)
-results['roc_auc'] = np.mean(roc_aucs)
-results['spec'] = np.mean(specificities)
-results['sens'] = np.mean(sensitivities)
+results['sensitivities'] = sensitivities
+results['specificities'] = specificities
+results['f1s'] = f1s
+results['roc_aucs'] = roc_aucs
+results['recalls'] = recalls
+results['precisions'] = precisions
+results['prc_aucs'] = prc_aucs
 
-results['prc_auc 95%CI'] = (ci_lower_prc_aucs, ci_upper_prc_aucs)
-results['precision 95%CI'] = (ci_lower_precisions, ci_upper_precisions)
-results['recall 95%CI:'] = (ci_lower_recalls, ci_upper_recalls)
-results['f1 95%CI:'] = (ci_lower_f1s, ci_upper_f1s)
-results['roc_auc 95%CI:'] = (ci_lower_roc_aucs, ci_upper_roc_aucs)
-results['spec 95%CI'] = (ci_lower_specificities, ci_upper_specificities)
-results['sens 95%CI'] = (ci_lower_sensitivities, ci_upper_sensitivities)
+# results['prc_auc'] = np.mean(prc_aucs)
+# results['precision'] = np.mean(precisions)
+# results['recall'] = np.mean(recalls)
+# results['f1'] = np.mean(f1s)
+# results['roc_auc'] = np.mean(roc_aucs)
+# results['spec'] = np.mean(specificities)
+# results['sens'] = np.mean(sensitivities)
+#
+# results['prc_auc 95%CI'] = (ci_lower_prc_aucs, ci_upper_prc_aucs)
+# results['precision 95%CI'] = (ci_lower_precisions, ci_upper_precisions)
+# results['recall 95%CI:'] = (ci_lower_recalls, ci_upper_recalls)
+# results['f1 95%CI:'] = (ci_lower_f1s, ci_upper_f1s)
+# results['roc_auc 95%CI:'] = (ci_lower_roc_aucs, ci_upper_roc_aucs)
+# results['spec 95%CI'] = (ci_lower_specificities, ci_upper_specificities)
+# results['sens 95%CI'] = (ci_lower_sensitivities, ci_upper_sensitivities)
+#
+# results['TP_avg'] = np.mean(tps)
+# results['FP_avg'] = np.mean(fps)
+# results['FN_avg'] = np.mean(fns)
+# results['TN_avg'] = np.mean(tns)
 
-results['TP_avg'] = np.mean(tps)
-results['FP_avg'] = np.mean(fps)
-results['FN_avg'] = np.mean(fns)
-results['TN_avg'] = np.mean(tns)
+
 
 print(results)
 
 # Convert dictionary to DataFrame
 df = pd.DataFrame(results)
+# df = pd.DataFrame.from_records(results)
+
 
 # Write DataFrame to CSV
-df.to_csv('logs_MH_subset/' + save_file + '.csv', index=False)
+df.to_csv('logs_MH_subset/NEW_statsig/' + save_file + '.csv', index=False)
 
 
 end_time = time.time()
