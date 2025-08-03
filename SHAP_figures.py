@@ -42,11 +42,6 @@ import time
 import random
 
 
-# amnt = args.a[0]
-# model = args.m
-# pretrain = args.p
-# train_data = args.t
-
 
 SEED = 42
 random.seed(SEED)
@@ -62,6 +57,7 @@ start_time = time.time()
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+  
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -70,7 +66,7 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
-
+# drop cols not overlap mhrn 
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
@@ -82,6 +78,7 @@ data["event90"] = data["event90"].fillna(value=0)
 
 data = data.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix dropped cols above
 data.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
@@ -313,21 +310,6 @@ else:
     print('Model path not found:', model_type, model_l)
 
 
-# # make data smaller to test
-# _, X_pc, _, y_pc = train_test_split(X_test_pc, y_test_pc, test_size=0.1, random_state=42, stratify = y_test_pc)
-# _, X_nonpc, _, y_nonpc = train_test_split(X_test_non_pc, y_test_non_pc, test_size=0.1, random_state=42, stratify = y_test_non_pc)
-#
-# X_test_pc = X_pc
-# y_test_pc = y_pc
-#
-# X_test_non_pc = X_nonpc
-# y_test_non_pc = y_nonpc
-#
-# print(X_test_pc.shape)
-# print(y_test_pc.shape)
-# print(X_test_non_pc.shape)
-# print(y_test_non_pc.shape)
-
 
 X_train_data_options = [X_train, X_train_non_pc]
 y_train_data_options = [y_train, y_train_non_pc]
@@ -339,15 +321,6 @@ y_gt = y_train_data_options[test_data_idx]
 # y_gt = y_gt[0:5]
 
 
-# # *************** small for testing ***************
-# _, X_1, _, y_1 = train_test_split(X_gt, y_gt, test_size=0.005, random_state=42, stratify = y_gt)
-# # _, X_nonpc, _, y_nonpc = train_test_split(X_test_non_pc, y_test_non_pc, test_size=0.1, random_state=42, stratify = y_test_non_pc)
-# X_gt = X_1
-# y_gt = y_1
-
-
-# preds = model.predict(X_gt.values)
-# pred_probs = model.predict_proba(X_gt.values)
 
 print()
 # print('y_gt', y_gt.values)
@@ -393,6 +366,7 @@ if model_type == 'ignore': #'ML':
     # Inspect SHAP values range
     print("SHAP values range for model:", shap_values.values.min(), shap_values.values.max())
 
+# this one runs for SHAP 
 elif model_type == 'DL' or model_type == 'ML':
     print('Explainer')
     # explainer = shap.DeepExplainer(model, X_gt.values)
@@ -454,72 +428,3 @@ print(f"Time taken to generate SHAP values and plots: {end_time - start_time} se
 
 
 
-
-
-
-
-# plt.figure()
-# # shap_values = explainer.shap_values(X_test_pc.values)
-# shap_values = explainer(X_gt.values)
-# shap.summary_plot(shap_values, X_gt.values, feature_names=X_gt.columns, plot_type="bar", max_display=10)
-# # shap.plots.bar(shap_values, max_display=20) #, show=False)
-# # plt.savefig('logs/figures/xgboost_entire_data_testPC_SHAP_bar.png')
-# # plt.savefig('xgboost_entire_data_testPC_SHAP_bar.png')
-# # Change the axis titles
-# ax = plt.gca()
-# ax.set_xlabel('mean(|SHAP Value|)')
-# # ax.set_ylabel('Feature Names')
-# plt.savefig('logs/figures/' + save_file + '_bar.png', bbox_inches='tight')
-#
-#
-# plt.figure()
-# shap.summary_plot(shap_values, X_gt.values, feature_names=X_gt.columns, max_display=10)
-# # plt.savefig('logs/figures/xgboost_entire_data_testPC_SHAP_summary.png')
-# ax.set_xlabel('SHAP Value')
-# # ax.set_ylabel('Feature Names')
-# plt.savefig('logs/figures/' + save_file + '_summary.png', bbox_inches='tight')
-# print('shap done and saved')
-# print()
-
-
-
-
-
-
-
-# # explainer = shap.TreeExplainer(model)
-#
-# plt.figure()
-# # shap_values = explainer.shap_values(X_test_pc.values)
-# shap_values = explainer(X_test_pc.values)
-# shap.summary_plot(shap_values, X_test_pc.values, plot_type="bar", max_display=10)
-# # shap.plots.bar(shap_values, max_display=20) #, show=False)
-# # plt.savefig('logs/figures/xgboost_entire_data_testPC_SHAP_bar.png')
-# # plt.savefig('xgboost_entire_data_testPC_SHAP_bar.png')
-# plt.savefig(save_file + '_testPC_SHAP_bar.png', bbox_inches='tight')
-#
-#
-# plt.figure()
-# shap.summary_plot(shap_values, X_test_pc.values, feature_names=X_test_pc.columns, max_display=10)
-# # plt.savefig('logs/figures/xgboost_entire_data_testPC_SHAP_summary.png')
-# plt.savefig(save_file + '_testPC_SHAP_summary.png', bbox_inches='tight')
-# print('shap done and saved')
-# print()
-#
-#
-#
-# # SHAP
-# plt.figure()
-# # explainer = shap.TreeExplainer(clf)
-# shap_values = explainer(X_test_non_pc.values)
-# shap.summary_plot(shap_values, X_test_non_pc.values, plot_type="bar", max_display=10)
-# # shap.plots.bar(shap_values, max_display=20) #, show=False)
-# # plt.savefig('logs/figures/xgboost_entire_data_testNonPC_SHAP_bar.png')
-# plt.savefig(save_file + '_testNonPC_SHAP_bar.png', bbox_inches='tight')
-#
-# plt.figure()
-# shap.summary_plot(shap_values, X_test_non_pc.values, feature_names=X_test_non_pc.columns, max_display=10)
-# # plt.savefig('logs/figures/xgboost_entire_data_testNonPC_SHAP_summary.png')
-# plt.savefig(save_file + '_testNonPC_SHAP_summary.png', bbox_inches='tight')
-# print('shap done and saved')
-# print()
