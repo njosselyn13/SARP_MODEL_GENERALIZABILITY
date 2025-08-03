@@ -1,14 +1,3 @@
-# import pandas as pd
-# import numpy as np
-# import os
-# import matplotlib.pyplot as plt
-# from sklearn.preprocessing import scale
-# import seaborn as sns
-# import joblib
-# import argparse
-
-
-
 import numpy as np
 # import tensorflow as tf
 import pandas as pd
@@ -54,10 +43,11 @@ random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
 
-# data = pd.read_csv('MHRN-OP-new.csv')
+
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+ 
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -66,6 +56,7 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
+# drop cols not in mhrn 
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
@@ -104,32 +95,6 @@ data[columns_to_scale] = scale(data[columns_to_scale])
 # ### Dealing with missing values
 
 missing_columns = data.columns[data.isnull().any()]
-
-
-# plt.figure(figsize=(10,6))
-# sns.heatmap(data[missing_columns].isna().transpose(),
-#             cmap="YlGnBu",
-#             cbar_kws={'label': 'Missing Data'})
-# plt.show()
-
-
-# for i in missing_columns:
-#     if sum(data[i].isnull()) == data.shape[0]:
-#         print(i)
-#         print(sum(data[i].isnull()))
-#     else:
-#         print(i)
-#         print(sum(data[i].isnull()))
-
-
-# for i in missing_columns:
-#     if sum(data[i].isnull()) == data.shape[0]:
-#         data[i].fillna(value=0,inplace=True)
-#         # print(sum(data[i].isnull()))
-#     else:
-#         mean_value=data[i].mean()
-#         data[i].fillna(value=mean_value,inplace=True)
-#         # print(sum(data[i].isnull()))
 
 
 
@@ -191,7 +156,7 @@ X_train_non_pc, X_val_non_pc, y_train_non_pc, y_val_non_pc = train_test_split(tr
 
 
 
-# Just runnin gon TEST data
+# Just running on TEST data
 ###
 pc_data = X_test_pc
 non_pc_data = X_test_non_pc
@@ -206,8 +171,8 @@ print()
 #########################################################################################
 
 
-# GENDER
-print('GENDER')
+# SEX
+print('SEX')
 
 gender_names = ['female']
 
@@ -453,11 +418,6 @@ for i in range(0, len(gender_names_new)):
     preds = model.predict(X_gt.values)
     pred_probs = model.predict_proba(X_gt.values)
 
-    # get predictions, probabilities, calculate metrics, plots/curves, save for each race to csv
-    # do bootstrapping
-    # ignore 'hispanic', 'raceMUOT' --- there are zero
-    # some races dont have any suicide attempts
-
     for i in range(times):
         pred_idx = []
         for l in range(2):  # number of classes? -- mine is 2 not 3 (Ruofan)
@@ -581,4 +541,5 @@ for i in range(0, len(gender_names_new)):
 
     # Write DataFrame to CSV
     df.to_csv('logs_MH_subset/fairness_gender/' + race_ + '_' + save_file + '.csv', index=False)
+
 
