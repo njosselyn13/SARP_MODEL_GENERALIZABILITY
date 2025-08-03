@@ -6,6 +6,8 @@ from itertools import combinations
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# run this script after running bootstrap_over13.py with the saving of each metric lists enabled/uncommented (see bootstrap_over13.py)
+
 def plot_all_boot_distributions(boot_metrics):
     # os.makedirs(output_dir, exist_ok=True)
 
@@ -94,4 +96,5 @@ print(df_results)
 print()
 
 df_results.to_csv('NEW_stat_sig_output.csv', index=False)
+
 
