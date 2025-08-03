@@ -47,6 +47,7 @@ start_time = time.time()
 # data1 = pd.read_csv('MHRN4_with_zip_income_college_binarized_new.csv')
 data1 = pd.read_csv('combined_pc_mh_data.csv')
 
+# filter for patients 13+ 
 data = data1[data1['age'] >= 13]
 min_value = data['age'].min()
 print()
@@ -55,7 +56,7 @@ print('MIN VALUE:', min_value)
 print('-----------------------')
 print()
 
-
+# drop cols not in mhrn 
 columns_to_drop_idx = ['antidep_rx_pre3m_idx', 'antidep_rx_pre1y_cumulative_idx', 'antidep_rx_pre5y_cumulative_idx', 'benzo_rx_pre3m_idx', 'benzo_rx_pre1y_cumulative_idx', 'benzo_rx_pre5y_cumulative_idx', 'hypno_rx_pre3m_idx', 'hypno_rx_pre1y_cumulative_idx', 'hypno_rx_pre5y_cumulative_idx', 'sga_rx_pre3m_idx', 'sga_rx_pre1y_cumulative_idx', 'sga_rx_pre5y_cumulative_idx', 'mh_ip_pre3m_idx', 'mh_ip_pre1y_cumulative_idx', 'mh_ip_pre5y_cumulative_idx', 'mh_op_pre3m_idx', 'mh_op_pre1y_cumulative_idx', 'mh_op_pre5y_cumulative_idx', 'mh_ed_pre3m_idx', 'mh_ed_pre1y_cumulative_idx', 'mh_ed_pre5y_cumulative_idx', 'any_sui_att_pre3m_idx', 'any_sui_att_pre1y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx', 'any_sui_att_pre5y_cumulative_idx_a', 'any_sui_att_pre5y_cumulative_idx_f', 'lvi_sui_att_pre3m_idx', 'lvi_sui_att_pre1y_cumulative_idx', 'lvi_sui_att_pre5y_cumulative_idx', 'ovi_sui_att_pre3m_idx', 'ovi_sui_att_pre1y_cumulative_idx', 'ovi_sui_att_pre5y_cumulative_idx', 'any_inj_poi_pre3m_idx', 'any_inj_poi_pre1y_cumulative_idx', 'any_inj_poi_pre5y_cumulative_idx']
 data = data.drop(columns=columns_to_drop_idx)
 
@@ -67,6 +68,7 @@ data["event90"] = data["event90"].fillna(value=0)
 
 data = data.drop(columns=["income", "college", "hhld_inc_It40k", "coll_deg_It25p"])
 
+# fix cols dropped above 
 data.rename(columns={'hhld_inc_lt40k_NJ': 'hhld_inc_It40k', 'coll_deg_lt25p_NJ': 'coll_deg_It25p'}, inplace=True)
 
 
@@ -277,7 +279,7 @@ args = parser.parse_args()
 
 # Load Model
 model_type = args.mt
-save_file = 'NEWstatsig_' + args.sv
+save_file = args.sv # 'NEWstatsig_' + args.sv
 model_l = args.m
 test_data_idx = args.td
 
@@ -395,35 +397,40 @@ ci_upper_precisions = np.percentile(precisions, 97.5)
 ci_lower_prc_aucs = np.percentile(prc_aucs, 2.5)
 ci_upper_prc_aucs = np.percentile(prc_aucs, 97.5)
 
-results['sensitivities'] = sensitivities
-results['specificities'] = specificities
-results['f1s'] = f1s
-results['roc_aucs'] = roc_aucs
-results['recalls'] = recalls
-results['precisions'] = precisions
-results['prc_aucs'] = prc_aucs
+############################################
+# uncomment these if running for statistical significance
+# results['sensitivities'] = sensitivities
+# results['specificities'] = specificities
+# results['f1s'] = f1s
+# results['roc_aucs'] = roc_aucs
+# results['recalls'] = recalls
+# results['precisions'] = precisions
+# results['prc_aucs'] = prc_aucs
+############################################
 
-# results['prc_auc'] = np.mean(prc_aucs)
-# results['precision'] = np.mean(precisions)
-# results['recall'] = np.mean(recalls)
-# results['f1'] = np.mean(f1s)
-# results['roc_auc'] = np.mean(roc_aucs)
-# results['spec'] = np.mean(specificities)
-# results['sens'] = np.mean(sensitivities)
-#
-# results['prc_auc 95%CI'] = (ci_lower_prc_aucs, ci_upper_prc_aucs)
-# results['precision 95%CI'] = (ci_lower_precisions, ci_upper_precisions)
-# results['recall 95%CI:'] = (ci_lower_recalls, ci_upper_recalls)
-# results['f1 95%CI:'] = (ci_lower_f1s, ci_upper_f1s)
-# results['roc_auc 95%CI:'] = (ci_lower_roc_aucs, ci_upper_roc_aucs)
-# results['spec 95%CI'] = (ci_lower_specificities, ci_upper_specificities)
-# results['sens 95%CI'] = (ci_lower_sensitivities, ci_upper_sensitivities)
-#
-# results['TP_avg'] = np.mean(tps)
-# results['FP_avg'] = np.mean(fps)
-# results['FN_avg'] = np.mean(fns)
-# results['TN_avg'] = np.mean(tns)
+############################################
+# comment these out if running for statistical significance
+results['prc_auc'] = np.mean(prc_aucs)
+results['precision'] = np.mean(precisions)
+results['recall'] = np.mean(recalls)
+results['f1'] = np.mean(f1s)
+results['roc_auc'] = np.mean(roc_aucs)
+results['spec'] = np.mean(specificities)
+results['sens'] = np.mean(sensitivities)
 
+results['prc_auc 95%CI'] = (ci_lower_prc_aucs, ci_upper_prc_aucs)
+results['precision 95%CI'] = (ci_lower_precisions, ci_upper_precisions)
+results['recall 95%CI:'] = (ci_lower_recalls, ci_upper_recalls)
+results['f1 95%CI:'] = (ci_lower_f1s, ci_upper_f1s)
+results['roc_auc 95%CI:'] = (ci_lower_roc_aucs, ci_upper_roc_aucs)
+results['spec 95%CI'] = (ci_lower_specificities, ci_upper_specificities)
+results['sens 95%CI'] = (ci_lower_sensitivities, ci_upper_sensitivities)
+
+results['TP_avg'] = np.mean(tps)
+results['FP_avg'] = np.mean(fps)
+results['FN_avg'] = np.mean(fns)
+results['TN_avg'] = np.mean(tns)
+############################################
 
 
 print(results)
@@ -439,18 +446,4 @@ df.to_csv('logs_MH_subset/NEW_statsig/' + save_file + '.csv', index=False)
 
 end_time = time.time()
 print(f"Time taken: {end_time - start_time} seconds")
-
-
-
-# import libraries
-# load test data
-# load model
-# randomly sample test data multiple times (10 times, bootstrapping)
-# get ground truth
-# apply loaded model to sampled data to get predictions, prediction probabilities
-# calculate metrics for each sampled set of test data
-# append them all together to a list of 10
-# calculate average of the 10 for each metric
-# calculate the confidence interval of the 10
-
 
