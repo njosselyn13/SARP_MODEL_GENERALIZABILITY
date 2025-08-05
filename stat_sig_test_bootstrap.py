@@ -8,6 +8,8 @@ import seaborn as sns
 from scipy import stats
 # from pingouin import ttest
 
+# run this script after running bootstrap_over13.py with the saving of each metric lists enabled/uncommented (see bootstrap_over13.py)
+
 def plot_all_boot_distributions(boot_metrics):
     # os.makedirs(output_dir, exist_ok=True)
 
@@ -221,3 +223,4 @@ df_results_greater.to_csv('ttest_greater_stat_sig_output.csv', index=False)
 
 print()
 print('DONE')
+
