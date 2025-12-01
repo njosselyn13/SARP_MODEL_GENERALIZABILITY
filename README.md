@@ -1,18 +1,14 @@
 # Model_Generalizability_Across_Clinical_Settings_SARP
 
-# Model Generalizability Across Clinical Settings in Suicide Attempt Risk Prediction
+# Evaluating Model Generalizability for Suicide Attempt Risk Prediction: Traditional Machine vs Deep Learning
 
-Corresponding Authors: AUTHORx, AUTHORy
+Corresponding Authors: Nicholas Josselyn, Ed Boudreaux, Feifan Liu
 
-Contact: AUTHORx EMAIL, AUTHORy EMAIL
-
-AUHTOR1
-
-Contact: AUTHOR1 EMAIL
+Contact: njjosselyn [at] wpi.edu, Edwin.Boudreaux [at] umassmed.edu, feifan.liu [at] umassmed.edu
 
 Link to paper: TBA
 
-AUTHOR LIST. "Model Generalizability Across Clinical Settings in Suicide Attempt Risk Prediction". In submission.
+Nicholas Josselyn, Sahil Sawant, Rachel E. Davis-Martin, Elke Rundensteiner, Ben S. Gerber, Bo Wang, Anthony J. Rothschild, Emmanuel Agu, Edwin D. Boudreaux, Feifan Liu. "Evaluating Model Generalizability for Suicide Attempt Risk Prediction: Traditional Machine vs Deep Learning". In submission.
 
 In this work we investigate the generalizability of pre-trained logistic regression models by the NIMH-funded MHRN group on our XXXX-hospital dataset of over 750,000 patient encounters for the task of suicide attempt risk prediction (SARP). Additionally, we train and evaluate machine (ML) and deep learning (DL) models on our XXXX-hospital dataset and study the generalizability of these models across different patient healthcare visits, in particular primary care (PC) and mental health specialty (MH) healthcare visits. Additionally, we provide feature importance analysis using SHAP to identify top contributing features to making predictions and a fairness anlaysis study on demographic subgroups of race (white, black, other), sex (male, female), and ethnicity (Hispanic, not Hispanic). 
 
@@ -78,6 +74,9 @@ Machine vs Deep Learning experiments:
 - DL_TabNet_pretraining_all_pc2nonpc.py: Train TabNet-2, pre-train pc+mh, train classifier pc, test mh (pre-train ratio=0.5)
 - DL_TabNet_pretraining_all_nonpc2pc.py: Train TabNet-2, pre-train pc+mh, train classifier mh, test pc (pre-train ratio=0.5)
 - DL_TabNet_pretraining_all_nonpc2nonpc.py: Train TabNet-2, pre-train pc+mh, train classifier mh, test mh (pre-train ratio=0.5)
+- ft_transformer.py: Train FT-Transformer for any of the 4 tasks AND perform bootstrap metrics on test set
+- ResNet_tabular.py: Train ResNet for any of the 4 tasks AND perform bootstrap metrics on test set
+- mlp_tabular.py: Train MLP for any of the 4 tasks AND perform bootstrap metrics on test set
 
 SHAP Feature Importance analysis:
 
@@ -109,7 +108,7 @@ TBA. Pending release approval.
 Link to MHRN PC and MH coefficients: https://github.com/MHResearchNetwork/srpm-model 
 (Look in "Results documents/", use "Primary care Coefficients.xlsx", "Mental health specialty coefficients.xlsx")
 
-Our data collected at XXXX-hospital is not publicly released at this time, pending approval.
+Our data collected at UMass Memorial Health is not publicly released at this time, pending approval.
 
 List of data feature columns and descriptions can be found in: "Analytic data dictionary original.xlsx"
 
@@ -142,5 +141,16 @@ Please also be sure to cite the original TabNet paper and paper associated with 
   pages={951--960},
   year={2018},
   publisher={Am Psychiatric Assoc}
+}
+  ```
+
+```latex
+@article{gorishniy2021revisiting,
+  title={Revisiting deep learning models for tabular data},
+  author={Gorishniy, Yury and Rubachev, Ivan and Khrulkov, Valentin and Babenko, Artem},
+  journal={Adv. in Neur. Inf. Proc. Sys.},
+  volume={34},
+  pages={18932--18943},
+  year={2021}
 }
   ```
