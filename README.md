@@ -17,7 +17,7 @@ We provide this code repository for reproducibility of results.
 ## Introduction
 This code was used to produce the results in the above paper title. Included here will be:
 
-- All machine and deep learning model codes (logistic regression, Random Forest, XGBoost, TabNet, TabNet+pretraining)
+- All machine and deep learning model codes (Logistic Regression, Random Forest, XGBoost, MLP, ResNet, FT-Transformer, TabNet, TabNet+pretraining)
 - Training scripts
 - Optuna tuning
 - Bootstrap sampling and 95% confidence intervals code (test set)
